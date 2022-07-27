@@ -18,21 +18,20 @@ export async function updatePostHandler(req: Request<UpdatePostInput["params"]>,
     const userId = res.locals.user.userId;
     const postId = req.params.postId;
     const update = req.body;
-    const updatedPost = await updatePost({
-        where: {
-            id: postId,
-        },
-        data: {
-            ...update,
-            userId,
-        },
-    });
-
-    if (!updatedPost) {
+    try {
+        const updatedPost = await updatePost({
+            where: {
+                id: postId,
+            },
+            data: {
+                ...update,
+                userId,
+            },
+        });
+        return res.status(201).send(updatedPost);
+    } catch (error) {
         return res.sendStatus(400);
     }
-
-    return res.status(201).send(updatedPost);
 }
 export async function getPostHandler(req: Request<GetPostInput["params"]>, res: Response) {
     const postId = req.params.postId;
