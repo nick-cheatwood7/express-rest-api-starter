@@ -1,5 +1,37 @@
 import { z } from "zod";
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      CreateUserInput:
+ *          type: object
+ *          required:
+ *              - email
+ *              - password
+ *              - confirmPassword
+ *          properties:
+ *              email:
+ *                  type: string
+ *                  example: jane_doe@example.com
+ *              password:
+ *                  type: string
+ *              confirmPassword:
+ *                  type: string
+ *      User:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: string
+ *              createdAt:
+ *                  type: string
+ *                  format: date-time
+ *              updatedAt:
+ *                  type: string
+ *                  format: date-time
+ *              email:
+ *                  type: string
+ */
 export const createUserSchema = z.object({
     body: z
         .object({
