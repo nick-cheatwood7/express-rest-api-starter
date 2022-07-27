@@ -19,6 +19,7 @@ model User {
   password String
 
   sessions Session[]
+  posts    Post[]
 
   @@map("users")
 }
@@ -35,4 +36,18 @@ model Session {
   userAgent String
 
   @@map("sessions")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  title   String
+  content String
+
+  @@map("posts")
 }

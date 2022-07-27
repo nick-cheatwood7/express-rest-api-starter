@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { createSession, findSessions, updateSession } from "../service/session.service";
 import { validatePassword } from "../service/user.service";
-import { signJwt } from "../utils/jwt";
+import { createAccessToken, createRefreshToken } from "../utils/auth";
 
 export async function createUserSessionHandler(req: Request, res: Response) {
     // Validate user's password
@@ -12,32 +12,22 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     // Create Session record
     const session = await createSession(user.id, req.get("user-agent") || "");
     // Create access token
-    const accessToken = signJwt(
-        {
-            ...user,
-            session: session.id,
-        },
-        {
-            expiresIn: "15m",
-        },
-    );
+    const accessToken = createAccessToken({
+        userId: user.id,
+        sessionId: session.id,
+    });
     // Create refresh token
-    const refreshToken = signJwt(
-        {
-            ...user,
-            session: session.id,
-        },
-        {
-            expiresIn: "15m",
-        },
-    );
+    const refreshToken = createRefreshToken({
+        userId: user.id,
+        sessionId: session.id,
+    });
 
     // return access and refresh token
     return res.json({ accessToken, refreshToken });
 }
 
 export async function getUserSessionHandler(_req: Request, res: Response) {
-    const userId = res.locals.user.id;
+    const userId = res.locals.user.userId;
     const sessions = await findSessions({
         where: {
             userId,
@@ -48,7 +38,7 @@ export async function getUserSessionHandler(_req: Request, res: Response) {
 }
 
 export async function deleteSessionHandler(_req: Request, res: Response) {
-    const sessionId = res.locals.user.session;
+    const sessionId = res.locals.user.sessionId;
     await updateSession({
         where: {
             id: sessionId,
