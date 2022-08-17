@@ -23,7 +23,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     });
 
     // return access and refresh token
-    return res.json({ accessToken, refreshToken });
+    return res.status(201).json({ accessToken, refreshToken });
 }
 
 export async function getUserSessionHandler(_req: Request, res: Response) {
